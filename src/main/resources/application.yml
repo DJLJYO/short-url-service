@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    name: shortUrlService
+  devtools:
+    add-properties: true
+  profiles:
+    active: dev
