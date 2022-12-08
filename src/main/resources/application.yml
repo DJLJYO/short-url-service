@@ -8,3 +8,6 @@ spring:
     add-properties: true
   profiles:
     active: dev
+
+fastUrl:
+  key: fasturl
