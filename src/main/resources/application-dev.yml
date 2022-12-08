@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Admin279.
+    url: jdbc:mysql://mysql.pspo.com/short_url

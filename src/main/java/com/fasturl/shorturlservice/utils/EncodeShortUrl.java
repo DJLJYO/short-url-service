@@ -1,6 +1,7 @@
 package com.fasturl.shorturlservice.utils;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * URL缩短生成类
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @see <a href="https://stackoverflow.com/questions/742013/how-do-i-create-a-url-shortener">How do I create a URL shortener?</a>
  * @since 2022-12-8 13:48:40
  */
+@Component
 public class EncodeShortUrl {
     // 要使用生成 URL 的字符
     private static final String[] CHARS = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
@@ -17,8 +19,7 @@ public class EncodeShortUrl {
             "W", "X", "Y", "Z"
     };
 
-    @Value("#{fastUrl.key}")
-    private static String KEY;
+    private static String KEY = "fasturl";
 
     // 生成成员数
     private static final int MEMBER = 2;

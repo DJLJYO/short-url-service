@@ -6,8 +6,8 @@ import lombok.Data;
 /**
  * 响应类
  *
- * @since 2022-12-8 15:34:49
  * @author quanyi
+ * @since 2022-12-8 15:34:49
  */
 @Data
 @AllArgsConstructor
@@ -22,8 +22,18 @@ public class Result {
      * @param data 数据
      * @return 返回Result实例
      */
-    public static Result success(Object data){
-        return new Result(200,"success",data);
+    public static Result success(Object data) {
+        return new Result(200, "success", data);
+    }
+
+    /**
+     * 成功响应
+     *
+     * @param data 数据
+     * @return 返回Result实例
+     */
+    public static Result success(Object data, String message) {
+        return new Result(200, message, data);
     }
 
     /**
@@ -32,7 +42,7 @@ public class Result {
      * @param message 提示信息
      * @return 返回Result实例
      */
-    public static Result fail(String message){
-        return new Result(299,message,null);
+    public static Result fail(String message) {
+        return new Result(299, message, null);
     }
 }
