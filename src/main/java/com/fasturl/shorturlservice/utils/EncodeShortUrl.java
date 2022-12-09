@@ -1,8 +1,5 @@
 package com.fasturl.shorturlservice.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 /**
  * URL缩短生成类
  *
@@ -10,7 +7,6 @@ import org.springframework.stereotype.Component;
  * @see <a href="https://stackoverflow.com/questions/742013/how-do-i-create-a-url-shortener">How do I create a URL shortener?</a>
  * @since 2022-12-8 13:48:40
  */
-@Component
 public class EncodeShortUrl {
     // 要使用生成 URL 的字符
     private static final String[] CHARS = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
@@ -18,8 +14,6 @@ public class EncodeShortUrl {
             "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
             "W", "X", "Y", "Z"
     };
-
-    private static String KEY = "fasturl";
 
     // 生成成员数
     private static final int MEMBER = 2;
@@ -30,11 +24,11 @@ public class EncodeShortUrl {
     /**
      * 缩短网址
      *
-     * @param url
+     * @param md5 网址MD5
      * @return 生成的关键词
      */
-    public static String shortUrl(String url) {
-        String[] urlKeys = shortUrl(url, "", MEMBER, LENGTH);
+    public static String shortUrlKey(String md5) {
+        String[] urlKeys = shortUrlKey(md5, MEMBER, LENGTH);
 
         // 此处固定长 8
         String key = urlKeys[0] + urlKeys[1];
@@ -44,14 +38,13 @@ public class EncodeShortUrl {
     /**
      * 缩短网址
      *
-     * @param url 网址
-     * @param s 盐
+     * @param md5    网址MD5
      * @param member 数组成员数
      * @param length 成员字符长度
      * @return
      */
-    public static String[] shortUrl(String url, String s, int member, int length) {
-        String encryptMd5 = Encrypt.md5(KEY + url + s);
+    public static String[] shortUrlKey(String md5, int member, int length) {
+        String encryptMd5 = md5;
 
         // 只取16位MD5
         String hex = encryptMd5.substring(8, 24);
