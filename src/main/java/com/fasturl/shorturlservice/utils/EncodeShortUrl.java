@@ -1,5 +1,8 @@
 package com.fasturl.shorturlservice.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * URL缩短生成类
  *
@@ -64,5 +67,18 @@ public class EncodeShortUrl {
             resUrl[i] = outChars;                       // 把字符串存入对应索引的输出数组
         }
         return resUrl;
+    }
+
+    /**
+     * 检查是否是URL
+     *
+     * @param url 要检查的URL
+     * @return Boolean
+     */
+    public static Boolean isUrl(String url) {
+        String regex = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(url);
+        return matcher.matches();
     }
 }
