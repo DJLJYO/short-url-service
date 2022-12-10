@@ -22,7 +22,7 @@ public class EncodeShortUrl {
     private static final int MEMBER = 2;
 
     // 成员字符长度
-    private static final int LENGTH = 4;
+    private static final int LENGTH = 2;
 
     /**
      * 缩短网址
@@ -33,7 +33,7 @@ public class EncodeShortUrl {
     public static String shortUrlKey(String md5) {
         String[] urlKeys = shortUrlKey(md5, MEMBER, LENGTH);
 
-        // 此处固定长 8
+        // 此处固定长 4
         String key = urlKeys[0] + urlKeys[1];
         return key;
     }
@@ -76,7 +76,8 @@ public class EncodeShortUrl {
      * @return Boolean
      */
     public static Boolean isUrl(String url) {
-        String regex = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+        // 匹配URL 或者 ip
+        String regex = "[a-zA-z]+://[^\\s]*|\\d+\\.\\d+\\.\\d+\\.\\d+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         return matcher.matches();
