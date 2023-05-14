@@ -17,7 +17,7 @@ public class HttpServletRequestUtil {
      */
     public static String getServerNamePort(HttpServletRequest request, Boolean notDefault) {
         // 不带80端口的
-        if (notDefault) {
+        if (notDefault && request.getServerPort() == 80) {
             return request.getServerName();
         }
         return request.getServerName() + ":" + request.getServerPort();
