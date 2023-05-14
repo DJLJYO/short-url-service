@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: fasturl
+    password: LRc2SxDrPjGcSHch
+    url: jdbc:mysql://106.52.186.109/short_url

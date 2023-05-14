@@ -77,7 +77,7 @@ public class EncodeShortUrl {
      */
     public static Boolean isUrl(String url) {
         // 匹配URL 或者 ip
-        String regex = "[a-zA-z]+://[^\\s]*|\\d+\\.\\d+\\.\\d+\\.\\d+";
+        String regex = "[a-zA-z]+://[^\\s]*|\\d+\\.\\d+\\.\\d+\\.\\d+|[a-zA-z]+.[^\\s]*";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         return matcher.matches();

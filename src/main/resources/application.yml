@@ -8,4 +8,6 @@ spring:
     active: dev
 
 fastUrl:
+  #  前缀
+  defaultPrefix: http://106.52.186.109/
   key: fasturl
