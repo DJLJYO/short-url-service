@@ -2,6 +2,11 @@ package com.fasturl.shorturlservice.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * HttpServletRequest工具类
+ *
+ * @since 2023-5-15
+ */
 public class HttpServletRequestUtil {
     /**
      * 返回服务器加端口号  服务器:端口号
