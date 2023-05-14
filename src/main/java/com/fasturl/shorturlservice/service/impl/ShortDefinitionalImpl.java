@@ -71,6 +71,8 @@ public class ShortDefinitionalImpl extends ServiceImpl<ShortDefinitionalMapper, 
         shortDefinitional.setExpireDate(shortenRequest.getExpireDate());
         // 域名ID
         shortDefinitional.setDomainId(shortenRequest.getDomain());
+        // 域名状态:有效
+        shortDefinitional.setStatus(ShortDefinitional.STATUS_VALIDITY);
         if (baseMapper.insert(shortDefinitional) == 1) {
             String shortUrl = domain.getDomain() + "/" + shortDefinitional.getShortKey();
             return Result.success(shortUrl);

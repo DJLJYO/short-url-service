@@ -7,11 +7,13 @@ import com.fasturl.shorturlservice.model.request.ShortenRequest;
 import com.fasturl.shorturlservice.service.DomainService;
 import com.fasturl.shorturlservice.service.ShortDefinitionalService;
 import com.fasturl.shorturlservice.utils.EncodeShortUrl;
+import com.fasturl.shorturlservice.utils.HttpServletRequestUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * URL缩短控制器
@@ -41,9 +43,20 @@ public class ShortUrlController {
         ShortDefinitional shortDefinitional = shortDefinitionalService.queryOriginUrl(key);
         // 数据库有记录
         if (shortDefinitional != null) {
+            // 地址失效
+            if (shortDefinitional.getStatus() == ShortDefinitional.STATUS_INVALID){
+                return Result.fail("地址已失效。");
+            }
+            // 判断是否过期(超出有效日期)
+            if(shortDefinitional.getExpireDate().getTime() < new Date().getTime()){
+                // 更新地址Status状态
+                shortDefinitional.setStatus(ShortDefinitional.STATUS_INVALID);
+                shortDefinitionalService.updateById(shortDefinitional);
+                return Result.fail("地址已过期。");
+            }
             Domain domain = domainService.queryById(shortDefinitional.getDomainId());
             // 以下代码可优化
-            if (domain != null && domain.getDomain().equals(request.getServerName())){
+            if (domain != null && domain.getDomain().equals(HttpServletRequestUtil.getServerNamePort(request))){
                 String redirectUrl = shortDefinitional.getOriginUrl();
                 // 301重定向
                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);

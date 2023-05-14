@@ -18,7 +18,7 @@ public class ShortenRequest {
     // 前缀域名ID
     private int domain;
     // 有效日期
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expireDate;
     private String key;
 }
