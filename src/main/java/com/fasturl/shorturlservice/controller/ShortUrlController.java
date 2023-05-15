@@ -57,10 +57,15 @@ public class ShortUrlController {
             Domain domain = domainService.queryById(shortDefinitional.getDomainId());
             // 以下代码可优化
             if (domain != null && domain.getDomain().equals(HttpServletRequestUtil.getServerNamePort(request))){
-                String redirectUrl = shortDefinitional.getOriginUrl();
+                StringBuilder redirectUrl = new StringBuilder(shortDefinitional.getOriginUrl());
+                // 检查Url是否规范，防止没有协议头重定向失败的情况
+                if (!EncodeShortUrl.checkScheme(redirectUrl.toString())){
+                    // 协议头不存在，添加默认协议头
+                    redirectUrl.insert(0,EncodeShortUrl.SCHEME_HTTP);
+                }
                 // 301重定向
                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                response.setHeader("location", redirectUrl);
+                response.setHeader("location", redirectUrl.toString());
                 return Result.success(shortDefinitional, "地址已重定向");
             }
         }
