@@ -28,41 +28,48 @@ public class ShortDefinitionalImpl extends ServiceImpl<ShortDefinitionalMapper, 
 
     @Override
     public Result addUrl(ShortenRequest shortenRequest) {
-        ShortDefinitional shortDefinitional = new ShortDefinitional();
+        ShortDefinitional shortDefinitional;
         // 检查域名ID
         Domain domain = domainService.queryById(shortenRequest.getDomain());
         if (domain == null) {
             // 域名不存在
             return Result.fail("domain id not exits!");
         }
+        // 返回对象说明更新成功，表示数据库有数据
+        if ((shortDefinitional = updateByUrlAndDomain(shortenRequest)) != null) {
+            // 数据更新了直接返回结果
+            String shortUrl = domain.getDomain() + "/" + shortDefinitional.getShortKey();
+            return Result.success(shortUrl);
+        }
         // 取URL摘要
         String urlMd5 = Encrypt.md5(shortenRequest.getUrl());
-        shortDefinitional.setOriginUrlMd5(urlMd5);
         LambdaQueryWrapper<ShortDefinitional> queryWrapper = new LambdaQueryWrapper<>();
-        // md5相同就说明两个URL是相同的
-        queryWrapper.eq(ShortDefinitional::getOriginUrlMd5, urlMd5);
-        ShortDefinitional sd = baseMapper.selectOne(queryWrapper);
-        // 数据库有记录
-        if (sd != null) {
-            return Result.success(domain.getDomain() + "/" + sd.getShortKey());
-        }
         // 验证short url关键词
         String shortKey = EncodeShortUrl.shortUrlKey(urlMd5);
+        // urlMd5 加盐处理
+        String urlMd5Salting = "";
+        // 下面do while这一部分主要是处理解决shortKey重复
         do {
             queryWrapper.clear();
             queryWrapper.eq(ShortDefinitional::getShortKey, shortKey);
-            // 查short url关键词是否重复
-            sd = baseMapper.selectOne(queryWrapper);
-            if (sd == null) {
+            // 查short url关键词是否重复，查不到就是没重复
+            shortDefinitional = baseMapper.selectOne(queryWrapper);
+            if (shortDefinitional == null) {
                 // 无重复，跳过
                 continue;
             }
             // 加盐
-            urlMd5 = Encrypt.md5(shortenRequest.getUrl() + new Date().getTime());
-            shortKey = EncodeShortUrl.shortUrlKey(urlMd5);
-            shortDefinitional.setMd5Composite(1);
+            urlMd5Salting = Encrypt.md5(shortenRequest.getUrl() + new Date().getTime());
+            shortKey = EncodeShortUrl.shortUrlKey(urlMd5Salting);
 //            System.out.println(shortenRequest.getUrl());
-        } while (sd != null);
+        } while (shortDefinitional != null);
+        shortDefinitional = new ShortDefinitional();
+        // 被加盐了
+        if (!urlMd5Salting.equals("")){
+            shortDefinitional.setMd5Composite(1);
+        }
+        // url md5
+        shortDefinitional.setOriginUrlMd5(urlMd5);
         // 短URL
         shortDefinitional.setShortKey(shortKey);
         // 源地址
@@ -86,5 +93,31 @@ public class ShortDefinitionalImpl extends ServiceImpl<ShortDefinitionalMapper, 
         lambdaQueryWrapper.eq(ShortDefinitional::getShortKey, shortKey);
         ShortDefinitional shortDefinitionalList = baseMapper.selectOne(lambdaQueryWrapper);
         return shortDefinitionalList;
+    }
+
+    @Override
+    public ShortDefinitional updateByUrlAndDomain(ShortenRequest shortenRequest) {
+        // 取URL摘要
+        String urlMd5 = Encrypt.md5(shortenRequest.getUrl());
+        LambdaQueryWrapper<ShortDefinitional> queryWrapper = new LambdaQueryWrapper<>();
+        // Url
+        queryWrapper.eq(ShortDefinitional::getOriginUrlMd5, urlMd5);
+        // 绑定的域名
+        queryWrapper.eq(ShortDefinitional::getDomainId, shortenRequest.getDomain());
+        ShortDefinitional shortDefinitional = baseMapper.selectOne(queryWrapper);
+        // 查询不到记录
+        if (shortDefinitional == null) {
+            return null;
+        }
+        // 有效期必须大于现行时间
+        if (shortenRequest.getExpireDate().getTime() <= new Date().getTime()) {
+            return null;
+        }
+        // 有效期
+        shortDefinitional.setExpireDate(shortenRequest.getExpireDate());
+        // 当有效期大于当前时间时，域名状态改为有效(可用)
+        shortDefinitional.setStatus(ShortDefinitional.STATUS_VALIDITY);
+        // 更新成功直接返回 ShortDefinitional对象，失败返回null
+        return baseMapper.updateById(shortDefinitional) > 0 ? shortDefinitional : null;
     }
 }

@@ -27,4 +27,12 @@ public interface ShortDefinitionalService extends IService<ShortDefinitional> {
      * @return Result
      */
     ShortDefinitional queryOriginUrl(String shortKey);
+
+    /**
+     * 更新，通过Url地址及绑定的域名ID进行更新
+     *
+     * @param shortenRequest 请求上来的Body
+     * @return 更新记录,返回null表示没有更新或找不到记录
+     */
+    ShortDefinitional updateByUrlAndDomain(ShortenRequest shortenRequest);
 }
