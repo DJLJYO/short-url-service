@@ -24,6 +24,8 @@ public class EncodeShortUrl {
     // 成员字符长度
     private static final int LENGTH = 2;
 
+    public final static String SCHEME_HTTP = "http://";
+
     /**
      * 缩短网址
      *
@@ -78,6 +80,20 @@ public class EncodeShortUrl {
     public static Boolean isUrl(String url) {
         // 匹配URL 或者 ip
         String regex = "[a-zA-z]+://[^\\s]*|\\d+\\.\\d+\\.\\d+\\.\\d+|[a-zA-z]+.[^\\s]*";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(url);
+        return matcher.matches();
+    }
+
+    /**
+     * 检查URL，主要检查协议规范
+     *
+     * @param url 要检查的URL
+     * @return Boolean 存在协议头返回true
+     */
+    public static Boolean checkScheme(String url){
+        // 匹配协议头
+        String regex = "^((https|http|ftp|rtsp|mms)?:\\/\\/)[^\\s]+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         return matcher.matches();
