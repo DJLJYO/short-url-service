@@ -59,7 +59,7 @@ public class ShortUrlController {
             if (domain != null && domain.getDomain().equals(HttpServletRequestUtil.getServerNamePort(request))){
                 StringBuilder redirectUrl = new StringBuilder(shortDefinitional.getOriginUrl());
                 // 检查Url是否规范，防止没有协议头重定向失败的情况
-                if (!EncodeShortUrl.checkScheme(redirectUrl.toString())){
+                if (!EncodeShortUrl.checkScheme(redirectUrl)){
                     // 协议头不存在，添加默认协议头
                     redirectUrl.insert(0,EncodeShortUrl.SCHEME_HTTP);
                 }
@@ -80,6 +80,10 @@ public class ShortUrlController {
      */
     @RequestMapping("/shorten")
     public Result shortenUrl(ShortenRequest shortenRequest) {
+        if (shortenRequest ==null){
+            // 请求体不能为空
+            return Result.fail("shorten request body cannot null!");
+        }
         if (!EncodeShortUrl.isUrl(shortenRequest.getUrl())) {
             return Result.fail("不是有效的URL！");
         }

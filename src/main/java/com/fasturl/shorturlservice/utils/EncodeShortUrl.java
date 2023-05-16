@@ -78,6 +78,7 @@ public class EncodeShortUrl {
      * @return Boolean
      */
     public static Boolean isUrl(String url) {
+        // todo 匹配规则存在问题
         // 匹配URL 或者 ip
         String regex = "[a-zA-z]+://[^\\s]*|\\d+\\.\\d+\\.\\d+\\.\\d+|[a-zA-z]+.[^\\s]*";
         Pattern pattern = Pattern.compile(regex);
@@ -91,7 +92,7 @@ public class EncodeShortUrl {
      * @param url 要检查的URL
      * @return Boolean 存在协议头返回true
      */
-    public static Boolean checkScheme(String url){
+    public static Boolean checkScheme(StringBuilder url){
         // 匹配协议头
         String regex = "^((https|http|ftp|rtsp|mms)?:\\/\\/)[^\\s]+";
         Pattern pattern = Pattern.compile(regex);
