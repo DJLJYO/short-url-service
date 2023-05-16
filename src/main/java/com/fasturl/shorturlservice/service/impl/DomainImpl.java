@@ -19,15 +19,13 @@ import org.springframework.stereotype.Service;
 public class DomainImpl extends ServiceImpl<DomainMapper, Domain> implements DomainService {
     @Override
     public Result addDomain(DomainRequest domainRequest) {
-        LambdaQueryWrapper<Domain> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Domain::getDomain, domainRequest.getDomain());
-        Domain domain = baseMapper.selectOne(lambdaQueryWrapper);
+        Domain domain = queryByDomain(domainRequest.getDomain());
         if (domain == null) {
             domain = new Domain();
             domain.setDomain(domainRequest.getDomain());
             domain.setStatus(domainRequest.getStatus());
             if (baseMapper.insert(domain) == 1) {
-                return Result.success(domainRequest.getDomain());
+                return Result.success(queryByDomain(domainRequest.getDomain()));
             }
         }
         return Result.fail("insert fail");
@@ -36,5 +34,13 @@ public class DomainImpl extends ServiceImpl<DomainMapper, Domain> implements Dom
     @Override
     public Domain queryById(int id) {
         return baseMapper.selectById(id);
+    }
+
+    @Override
+    public Domain queryByDomain(String domain) {
+        LambdaQueryWrapper<Domain> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Domain::getDomain, domain);
+        Domain domainObject = baseMapper.selectOne(lambdaQueryWrapper);
+        return domainObject;
     }
 }

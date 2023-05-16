@@ -27,4 +27,12 @@ public interface DomainService extends IService<Domain> {
      * @return Result
      */
     Domain queryById(int id);
+
+    /**
+     * 根据域名domain查一条
+     *
+     * @param domain 域名
+     * @return Result
+     */
+    Domain queryByDomain(String domain);
 }
