@@ -29,6 +29,10 @@ public class ShortDefinitionalImpl extends ServiceImpl<ShortDefinitionalMapper, 
     @Override
     public Result addUrl(ShortenRequest shortenRequest) {
         ShortDefinitional shortDefinitional;
+        // 有效期必须大于现行时间,否则就不可以使用
+        if (shortenRequest.getExpireDate().getTime() <= new Date().getTime()) {
+            return Result.fail("The validity period must be longer than the current time!");
+        }
         // 检查域名ID
         Domain domain = domainService.queryById(shortenRequest.getDomain());
         if (domain == null) {
@@ -65,7 +69,7 @@ public class ShortDefinitionalImpl extends ServiceImpl<ShortDefinitionalMapper, 
         } while (shortDefinitional != null);
         shortDefinitional = new ShortDefinitional();
         // 被加盐了
-        if (!urlMd5Salting.equals("")){
+        if (!urlMd5Salting.equals("")) {
             shortDefinitional.setMd5Composite(1);
         }
         // url md5
@@ -109,12 +113,11 @@ public class ShortDefinitionalImpl extends ServiceImpl<ShortDefinitionalMapper, 
         if (shortDefinitional == null) {
             return null;
         }
-        // 有效期必须大于现行时间
-        if (shortenRequest.getExpireDate().getTime() <= new Date().getTime()) {
-            return null;
+        // 有效期必须大于数据库的时间,否则就不更改有效期
+        if (shortenRequest.getExpireDate().getTime() > shortDefinitional.getExpireDate().getTime()) {
+            // 有效期
+            shortDefinitional.setExpireDate(shortenRequest.getExpireDate());
         }
-        // 有效期
-        shortDefinitional.setExpireDate(shortenRequest.getExpireDate());
         // 当有效期大于当前时间时，域名状态改为有效(可用)
         shortDefinitional.setStatus(ShortDefinitional.STATUS_VALIDITY);
         // 更新成功直接返回 ShortDefinitional对象，失败返回null

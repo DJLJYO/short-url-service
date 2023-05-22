@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -44,11 +45,11 @@ public class ShortUrlController {
         // 数据库有记录
         if (shortDefinitional != null) {
             // 地址失效
-            if (shortDefinitional.getStatus() == ShortDefinitional.STATUS_INVALID){
+            if (shortDefinitional.getStatus() == ShortDefinitional.STATUS_INVALID) {
                 return Result.fail("地址已失效。");
             }
             // 判断是否过期(超出有效日期)
-            if(shortDefinitional.getExpireDate().getTime() < new Date().getTime()){
+            if (shortDefinitional.getExpireDate().getTime() < new Date().getTime()) {
                 // 更新地址Status状态
                 shortDefinitional.setStatus(ShortDefinitional.STATUS_INVALID);
                 shortDefinitionalService.updateById(shortDefinitional);
@@ -56,12 +57,12 @@ public class ShortUrlController {
             }
             Domain domain = domainService.queryById(shortDefinitional.getDomainId());
             // 以下代码可优化
-            if (domain != null && domain.getDomain().equals(HttpServletRequestUtil.getServerNamePort(request))){
+            if (domain != null && domain.getDomain().equals(HttpServletRequestUtil.getServerNamePort(request))) {
                 StringBuilder redirectUrl = new StringBuilder(shortDefinitional.getOriginUrl());
                 // 检查Url是否规范，防止没有协议头重定向失败的情况
-                if (!EncodeShortUrl.checkScheme(redirectUrl)){
+                if (!EncodeShortUrl.checkScheme(redirectUrl)) {
                     // 协议头不存在，添加默认协议头
-                    redirectUrl.insert(0,EncodeShortUrl.SCHEME_HTTP);
+                    redirectUrl.insert(0, EncodeShortUrl.SCHEME_HTTP);
                 }
                 // 301重定向
                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
@@ -80,12 +81,20 @@ public class ShortUrlController {
      */
     @RequestMapping("/shorten")
     public Result shortenUrl(ShortenRequest shortenRequest) {
-        if (shortenRequest ==null){
+        if (shortenRequest == null) {
             // 请求体不能为空
             return Result.fail("shorten request body cannot null!");
         }
         if (!EncodeShortUrl.isUrl(shortenRequest.getUrl())) {
             return Result.fail("不是有效的URL！");
+        }
+        // 默认过期时间
+        if (shortenRequest.getExpireDate() == null) {
+            // 增加一个月时间
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MONTH, 1);
+            shortenRequest.setExpireDate(calendar.getTime());
+            System.out.println(shortenRequest.getExpireDate());
         }
         return shortDefinitionalService.addUrl(shortenRequest);
     }
