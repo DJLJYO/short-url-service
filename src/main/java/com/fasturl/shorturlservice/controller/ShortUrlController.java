@@ -8,6 +8,7 @@ import com.fasturl.shorturlservice.service.DomainService;
 import com.fasturl.shorturlservice.service.ShortDefinitionalService;
 import com.fasturl.shorturlservice.utils.EncodeShortUrl;
 import com.fasturl.shorturlservice.utils.HttpServletRequestUtil;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,6 +23,7 @@ import java.util.Date;
  * @author quanyi
  * @since 2022-12-8 18:47:54
  */
+@Api(tags = "URL缩短控制")
 @RestController
 public class ShortUrlController {
 
@@ -79,7 +81,7 @@ public class ShortUrlController {
      * @param shortenRequest 缩短网址请求体
      * @return Result
      */
-    @RequestMapping("/shorten")
+    @PostMapping("/shorten")
     public Result shortenUrl(ShortenRequest shortenRequest) {
         if (shortenRequest == null) {
             // 请求体不能为空

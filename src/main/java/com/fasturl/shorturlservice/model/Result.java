@@ -1,5 +1,7 @@
 package com.fasturl.shorturlservice.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,12 +11,16 @@ import lombok.Data;
  * @author quanyi
  * @since 2022-12-8 15:34:49
  */
+@ApiModel(value = "响应类", description = "响应对象")
 @Data
 @AllArgsConstructor
-public class Result {
+public class Result<T> {
+    @ApiModelProperty(value = "状态码")
     private int code;
+    @ApiModelProperty(value = "响应信息")
     private String message;
-    private Object data;
+    @ApiModelProperty(value = "响应数据（对象）")
+    private T data;
 
     /**
      * 成功响应

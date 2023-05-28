@@ -6,8 +6,13 @@ spring:
     name: shortUrlService
   profiles:
     active: dev
+  mvc:
+    pathmatch:
+      #      验证swagger-ui时遇到类似于404错误的问题，可能是因为Spring的URL匹配器没有正确匹配URL
+      #      可以通过在Spring Boot的应用程序配置文件中设置spring.mvc.pathmatch.matching-strategy属性，将匹配策略更改为ANT_PATH_MATCHER，以便正确匹配复杂的URL规则
+      matching-strategy: ant_path_matcher
 
-fastUrl:
-  #  前缀
-  defaultPrefix: http://106.52.186.109/
-  key: fasturl
+Swagger:
+  #  Api标题
+  title: FastUrl
+  description: 网址缩短,目前版本v1.1
