@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 域名管理
@@ -51,5 +52,17 @@ public class DomainController {
             return Result.fail("找不到此域名ID");
         }
         return Result.success(domainObject);
+    }
+
+    /**
+     * 查域名列表
+     *
+     * @return Result
+     */
+    @ApiOperation(value = "域名列表", notes = "查询域名列表", response = Result.class)
+    @PostMapping("/list")
+    public Result list() {
+        List<Domain> domainList = domainService.list();
+        return Result.success(domainList);
     }
 }
